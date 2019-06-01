@@ -2,13 +2,13 @@
 
 ## Installation
 
-The `gplclient` package is designed to be used in conjunction with the Go modules dependency
+The `gqlclient` package is designed to be used in conjunction with the Go modules dependency
 management system introduced in Go 1.11 and 1.12. Simply add the following to the import
 block at the head of your source code files:
 
 ```go
 import (
-    "github.com/mikebway/gogpl/gplclient"
+    "github.com/mikebway/gogql/gqlclient"
 )
 ```
 
@@ -80,7 +80,7 @@ All GraphQL query responses are recieved as JSON in the following general form:
 }
 ```
 
-The `gplclient` package models this with the `gplclient.QueryResponse` type definition:
+The `gqlclient` package models this with the `gqlclient.QueryResponse` type definition:
 
 ```go
 type QueryResponse struct {
@@ -93,7 +93,7 @@ type QueryResponse struct {
 ```
 
 As you can see, the `Data` field is declared as an empty interface type. When issuing a query, clients of
-the package pass a reference to an instance of `gplclient.QueryResponse` with the `Data` field pointing to
+the package pass a reference to an instance of `gqlclient.QueryResponse` with the `Data` field pointing to
 to a custom structure type that they declare to match the response content that they expect to recieve.
 
 For the github API query shown above, the [`clientdemo/github.go`](/clientdemo/github.go) code builds up its 
@@ -158,7 +158,7 @@ func main() {
     http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 
     // Construct a GraphQL client
-    client := gplclient.CreateClient(githubAPIURL, &githubAuthorization)
+    client := gqlclient.CreateClient(githubAPIURL, &githubAuthorization)
 
     // Assemble the query parameters into a map
     queryParms := make(map[string]interface{})
@@ -166,7 +166,7 @@ func main() {
     queryParms["name"] = repoName
 
     // Establish a place to recieve the results of the query
-    response := gplclient.QueryResponse{Data: new(GetRepoDataResponse)}
+    response := gqlclient.QueryResponse{Data: new(GetRepoDataResponse)}
 
     // Run the query
     err := client.Query(getRepoDataQuery, &queryParms, &response)

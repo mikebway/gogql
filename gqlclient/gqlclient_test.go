@@ -1,14 +1,14 @@
 /*
-Package gplclient is a simple client package for accessing GrpapQL APIs.
-This file contains unit test code for gplclient.
+Package gqlclient is a simple client package for accessing GrpapQL APIs.
+This file contains unit test code for gqlclient.
 */
-package gplclient
+package gqlclient
 
 import (
 	"testing"
 )
 
-// This file defines unit tests for the gplclient library.
+// This file defines unit tests for the gqlclient library.
 
 // TestPackQuery exercises the utility method that is used to reduce easily read, multi-line
 // GraphQL expressions down to simple strings with no excess whitepsace or formatting ready

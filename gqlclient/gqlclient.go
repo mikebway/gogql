@@ -1,7 +1,7 @@
 /*
-Package gplclient is a simple client package for accessing GrpapQL APIs.
+Package gqlclient is a simple client package for accessing GrpapQL APIs.
 */
-package gplclient
+package gqlclient
 
 import (
 	"bytes"
@@ -13,37 +13,37 @@ import (
 	"time"
 )
 
-// GplClient is a structure/class that is used to wrap configuration data including the
+// GqlClient is a structure/class that is used to wrap configuration data including the
 // target GraphQL URL and any autheorization token that may be required. Queries are
 // invoked through methods associated with this structure type.
 //
-// Valid GplClient instances can only be obtained through the CreateClient(...) function.
-type GplClient struct {
+// Valid GqlClient instances can only be obtained through the CreateClient(...) function.
+type GqlClient struct {
 	targetURL     string  // The GraphQL server URL, e.g. https://api.github.com/graphql
 	authorization *string // If not nil, the authoorization header value to be supplied with GraphQL calls
 }
 
-// CreateClient returns a reference to an initialized GplClient instance. The target URL for the
+// CreateClient returns a reference to an initialized GqlClient instance. The target URL for the
 // GraphQL must be provided. The authorization string my be nil if no token or basic auth header
 // is required by the server. A typical authirization value for a target URL, say, https://api.github.com/graphql
 // the authorization value would be of the form "token f69acf817105a9e024f3e94a80bbf09e2879abef". Note that
-// the authorization value is write only - once set in the GplClient it cannot be accessed outside of the
-// `gplclient` package. While the targetURL can be retrieved vai the GetTargetURL() function, it cannot be
+// the authorization value is write only - once set in the GqlClient it cannot be accessed outside of the
+// `gqlclient` package. While the targetURL can be retrieved vai the GetTargetURL() function, it cannot be
 // modified.
-func CreateClient(targetURL string, authorization *string) *GplClient {
-	return &GplClient{targetURL, authorization}
+func CreateClient(targetURL string, authorization *string) *GqlClient {
+	return &GqlClient{targetURL, authorization}
 }
 
-// GetTargetURL returns the target API URL of the GplClient.
-func (gc *GplClient) GetTargetURL() string {
+// GetTargetURL returns the target API URL of the GqlClient.
+func (gc *GqlClient) GetTargetURL() string {
 	return gc.targetURL
 }
 
 // QueryResponse is a structure pattern that should be followed by all response structures provided to the
-// gplclient.Query(...) method. Package clients should set the Data variable to point to a struture instance
+// gqlclient.Query(...) method. Package clients should set the Data variable to point to a struture instance
 // that has been declared to match the expected JSON result of the query. For example:
 //
-// 		res := gplclient.QueryResponse{Data: new(RepositorySearch)}
+// 		res := gqlclient.QueryResponse{Data: new(RepositorySearch)}
 //
 type QueryResponse struct {
 	Data interface {
@@ -59,7 +59,7 @@ type QueryResponse struct {
 // The query string may be formatted with whitespace and carriage returns for readbility, any such whitespace shall
 // be removed prior to submission to the GraphQL server. The queryParms may be nil if the query does not require
 // any parameters.
-func (gc *GplClient) Query(queryStr string, queryParms *map[string]interface{}, response *QueryResponse) error {
+func (gc *GqlClient) Query(queryStr string, queryParms *map[string]interface{}, response *QueryResponse) error {
 
 	// Build the GraphQL query into JSON that we can POST
 	q := query{packQuery(queryStr), *queryParms}

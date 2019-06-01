@@ -1,5 +1,5 @@
 /*
-Package clientdemo illustrates how gplclient can be used to access a github GrapghQL Query API.
+Package clientdemo illustrates how gqlclient can be used to access a github GrapghQL Query API.
 */
 package clientdemo
 
@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mikebway/gogpl/gplclient"
+	"github.com/mikebway/gogql/gqlclient"
 )
 
 // The github API represents data time values in ISO 8601 form
@@ -96,7 +96,7 @@ type GetRepoDataResponse struct {
 func GetRepoData(githubAPIURL string, githubToken string, owner string, repoName string) (*RepoData, error) {
 
 	// Construct a GraphQL client
-	client := gplclient.CreateClient(githubAPIURL, &githubToken)
+	client := gqlclient.CreateClient(githubAPIURL, &githubToken)
 
 	// Assemble the query parameters into a map
 	queryParms := make(map[string]interface{})
@@ -104,7 +104,7 @@ func GetRepoData(githubAPIURL string, githubToken string, owner string, repoName
 	queryParms["name"] = &repoName
 
 	// Establish a place to recieve the results of the query
-	response := gplclient.QueryResponse{Data: new(GetRepoDataResponse)}
+	response := gqlclient.QueryResponse{Data: new(GetRepoDataResponse)}
 
 	// Run the query
 	err := client.Query(getRepoDataQuery, &queryParms, &response)

@@ -1,3 +1,3 @@
-module github.com/mikebway/gogpl
+module github.com/mikebway/gogql
 
 go 1.12

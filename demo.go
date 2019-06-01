@@ -1,5 +1,5 @@
 /*
-Package main demonstrates how gplclient can be used to access a GrapghQL Query API.
+Package main demonstrates how gqlclient can be used to access a GrapghQL Query API.
 */
 package main
 
@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/mikebway/gogpl/clientdemo"
+	"github.com/mikebway/gogql/clientdemo"
 )
 
 // URL of the github service GraphQL API; set by command line flag
@@ -40,7 +40,7 @@ func main() {
 		log.Println()
 		log.Println("The GITHUB_TOKEN should be set to a github developer personal access token")
 		log.Println("value with sufficient rights to access the values referenced by the")
-		log.Println("github.com/mikebway/gogpl/github.getRepoDataQuery GraphQL query.")
+		log.Println("github.com/mikebway/gogql/github.getRepoDataQuery GraphQL query.")
 		log.Println()
 	}
 
