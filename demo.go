@@ -30,9 +30,9 @@ var repoName string
 func main() {
 
 	// Declare our command line flags
-	flag.StringVar(&githubURL, "github", "https://github.com/api/graphql", "URL of the github service GraphQL API")
+	flag.StringVar(&githubURL, "github", "https://api.github.com/graphql", "URL of the github service GraphQL API")
 	flag.StringVar(&repoOwner, "owner", "mikebway", "The organization or user that owns the repository to be evaluated")
-	flag.StringVar(&repoName, "name", "ktor-portfolio", "The name of the repository to be evaluated")
+	flag.StringVar(&repoName, "name", "gogql", "The name of the repository to be evaluated")
 	flag.BoolVar(&disableCertificateVerification, "verify", true, "true if to skip SSL certificate verification")
 	defaultUsage := flag.Usage
 	flag.Usage = func() {
@@ -57,6 +57,9 @@ func main() {
 		log.Printf("ERROR: GITHUB_TOKEN environment is not set\n\n")
 	}
 
+	// Passed as an HTTP Authorization header, the token value must be prefixed by "token "
+	githubAuthorization := "token " + githubToken
+
 	// With the command line understood, now do the actual work of the demonstration
 	// If we are to ignore unknown SSL certificate authorities ...
 	if disableCertificateVerification {
@@ -66,7 +69,7 @@ func main() {
 	}
 
 	// Have our client demonstration package do the real work
-	result, err := clientdemo.GetRepoData(githubURL, githubToken, repoOwner, repoName)
+	result, err := clientdemo.GetRepoData(githubURL, githubAuthorization, repoOwner, repoName)
 	if err != nil {
 		log.Print("\n*** GraphQL Client Demo FAILED ***\n\n")
 		log.Fatal(err)

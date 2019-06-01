@@ -138,8 +138,9 @@ type GetRepoDataResponse struct {
 
 ### Invoking the Query
 
-Crudely, without illustrating how paging of alrge result sets might be handled, a query like that 
-above can now be invoked and checked as follows:
+The [`demo.go`](/demo.go) demostration application in the project root is slightly more sophisticated but,
+crudely, without illustrating how paging of large result sets might be handled, a query like that above
+can be invoked and checked as follows:
 
 ```go
 const githubAPIURL = "https://api.github.com/graphql"
