@@ -1,5 +1,12 @@
 # A Simple GraphQL Client For Go
 
+## Early Stage Project
+
+As the project stands at this stage, the "client" only supports queries and not mutations
+or subscriptions. Whether I wil take it much beyond this point I am not yet sure. It was
+a useful learning exercise to create it but there are perhaps more complete implementations
+availble form other sources that make further effor moot?
+
 ## Installation
 
 The `gqlclient` package is designed to be used in conjunction with the Go modules dependency
