@@ -29,6 +29,29 @@ Also at the bottom of the page are instructions for making the `GITHUB_TOKEN` en
 variable available for running the demo app under the VSCode IDE and make it available
 for unit test execution with VSCode.
 
+### Code Coverage Reporting
+
+Because I keep having to lookup how to get an overall line coverage report, I am documenting
+that here. Execute the following commands:
+
+```text
+go test -coverpkg=./... -coverprofile=cover.out ./...
+go tool cover -func=cover.out
+```
+
+The final command of those two should yield a report by package and function
+that looks something like this:
+
+```text
+github.com/mikebway/gogql/clientdemo/github.go:93:      GetRepoData     96.0%
+github.com/mikebway/gogql/demo.go:32:                   main            80.0%
+github.com/mikebway/gogql/gqlclient/gqlclient.go:33:    CreateClient    100.0%
+github.com/mikebway/gogql/gqlclient/gqlclient.go:38:    GetTargetURL    100.0%
+github.com/mikebway/gogql/gqlclient/gqlclient.go:62:    Query           88.9%
+github.com/mikebway/gogql/gqlclient/gqlclient.go:101:   packQuery       100.0%
+total:                                                  (statements)    88.2%
+```
+
 ## Querying
 
 The code examples below are lifted from the [`demo.go`](/demo.go) demostration application in
