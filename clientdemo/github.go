@@ -11,9 +11,6 @@ import (
 	"github.com/mikebway/gogql/gqlclient"
 )
 
-// The github API represents data time values in ISO 8601 form
-const datetimeLayout = "2018-04-21T19:34:14Z"
-
 // RepoCommit is a structure type that represents a single commit to a github repository
 type RepoCommit struct {
 	CommittedAt time.Time // The data and time at which the commit was made
@@ -26,13 +23,13 @@ type RepoData struct {
 	Owner           string       // The user or organization that owns the repository
 	Description     string       // The short description of the repository
 	CreatedAt       time.Time    // The date and time at which the repository was created
-	PrimaryLangauge string       // The language used for most of the code in the repository
+	PrimaryLanguage string       // The language used for most of the code in the repository
 	IsPrivate       bool         // true if the repository is private to the owner
 	RecentCommits   []RepoCommit // A list of the most recent commits (if any)
 }
 
 // The Graphql query we use to retrieve some data about a given repository
-const getRepoDataQuery = `query FetchRepoInfo($owner: String!, $name: String!) {
+var getRepoDataQuery = `query FetchRepoInfo($owner: String!, $name: String!) {
 	repository(owner: $owner, name: $name) {
 	  name
 	  owner {
@@ -71,9 +68,9 @@ type GetRepoDataResponse struct {
 		} `json:"owner"`
 		Description     string `json:"description"`
 		CreatedAt       string `json:"createdAt"`
-		PrimaryLangauge struct {
+		PrimaryLanguage struct {
 			Name string `json:"name"`
-		} `json:"primaryLangauge"`
+		} `json:"primaryLanguage"`
 		IsPrivate bool `json:"isPrivate"`
 		Ref       struct {
 			Target struct {
@@ -107,7 +104,7 @@ func GetRepoData(githubAPIURL string, githubToken string, owner string, repoName
 	response := gqlclient.QueryResponse{Data: new(GetRepoDataResponse)}
 
 	// Run the query
-	err := client.Query(getRepoDataQuery, &queryParms, &response)
+	err := client.Query(&getRepoDataQuery, &queryParms, &response)
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +134,7 @@ func GetRepoData(githubAPIURL string, githubToken string, owner string, repoName
 		Name:            repository.Name,
 		Owner:           repository.Owner.Login,
 		Description:     repository.Description,
-		PrimaryLangauge: repository.PrimaryLangauge.Name,
+		PrimaryLanguage: repository.PrimaryLanguage.Name,
 		IsPrivate:       repository.IsPrivate,
 	}
 

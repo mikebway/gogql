@@ -19,14 +19,61 @@ import (
 )
 ```
 
+## Unit Testing
+
+Note that to run the unit tests, you must have set the `GITHUB_TOKEN` environment variable
+with a github 'developer access token'. Instructions for creating such a token for your
+github login are described at the very bottom of this page.
+
+Also at the bottom of the page are instructions for making the `GITHUB_TOKEN` environment
+variable available for running the demo app under the VSCode IDE and make it available
+for unit test execution with VSCode.
+
 ## Querying
 
-The following example code is lifted from the [`demo.go`](/demo.go) demostration application in
+The code examples below are lifted from the [`demo.go`](/demo.go) demostration application in
 the project root and the [`clientdemo/github.go`](/clientdemo/github.go) package code that the
 app uses. After pulling down this project, you can run the demonstration app as follows:
 
 ```shell
 go run demo.go
+```
+
+Add a `-h` flag to display the following command line usage information:
+
+```text
+Usage of /var/folders/b6/n6cvhy2d6455c88qks3cxkr00000gn/T/go-build099997439/b001/exe/demo:
+  -github string
+        URL of the github service GraphQL API (default "https://api.github.com/graphql")
+  -name string
+        The name of the repository to be evaluated (default "gogql")
+  -owner string
+        The organization or user that owns the repository to be evaluated (default "mikebway")
+  -verify
+        true if to skip SSL certificate verification (default true)
+
+The GITHUB_TOKEN should be set to a github developer personal access token
+value with sufficient rights to access the values referenced by the
+github.com/mikebway/gogql/github.getRepoDataQuery GraphQL query.
+```
+
+Instructions for creating such a `GITHUB_TOKEN` for your github login are described at the very
+bottom of this page.
+
+### Disabling TLS / SSL Certificate Validation
+
+Normally, you would not need or want to skip validation of SSL certificates but it is not uncommon
+in development enviroments for custom certificates to have been used that are not backed by
+a certificate authority that the Go enviroment is aware of. The quicketst way to work around,
+as illustrated by the [`demo.go`](/demo.go) app, is as follows:
+
+```go
+    // If we are to ignore unknown SSL certificate authorities ...
+    if disableCertificateVerification {
+
+        // Disable security checks on HTTPS requests
+        http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+    }
 ```
 
 ### Declaring the Query Text
@@ -36,7 +83,7 @@ as you like. For example (from [`clientdemo/github.go`](/clientdemo/github.go)):
 
 ```go
 // The Graphql query we use to retrieve some data about a given repository
-const getRepoDataQuery = `query FetchRepoInfo($owner: String!, $name: String!) {
+var getRepoDataQuery = `query FetchRepoInfo($owner: String!, $name: String!) {
     repository(owner: $owner, name: $name) {
       name
       owner {
@@ -116,9 +163,9 @@ type GetRepoDataResponse struct {
         } `json:"owner"`
         Description     string `json:"description"`
         CreatedAt       string `json:"createdAt"`
-        PrimaryLangauge struct {
+        PrimaryLanguage struct {
             Name string `json:"name"`
-        } `json:"primaryLangauge"`
+        } `json:"primaryLanguage"`
         IsPrivate bool `json:"isPrivate"`
         Ref       struct {
             Target struct {
@@ -148,11 +195,6 @@ const githubAPIURL = "https://api.github.com/graphql"
 var owner = "mikebway"
 var repoName = "ktor-portfolio"
 
-const githubAPIURL = "https://api.github.com/graphql"
-
-var owner = "mikebway"
-var repoName = "ktor-portfolio"
-
 func main() {
 
     // Retrieve the github developer personal access token
@@ -161,9 +203,6 @@ func main() {
         log.Fatalf("\nERROR: GITHUB_TOKEN environment is not set\n\n")
     }
     githubAuthorization := "token " + githubToken
-
-    // Disable security checks on HTTPS requests
-    http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 
     // Construct a GraphQL client
     client := gqlclient.CreateClient(githubAPIURL, &githubAuthorization)
@@ -177,7 +216,7 @@ func main() {
     response := gqlclient.QueryResponse{Data: new(GetRepoDataResponse)}
 
     // Run the query
-    err := client.Query(getRepoDataQuery, &queryParms, &response)
+    err := client.Query(&getRepoDataQuery, &queryParms, &response)
     if err != nil {
         log.Fatalf("\nFAILED: %v\n\n", err)
     }
@@ -212,7 +251,7 @@ func main() {
         repository.Owner,
         repository.Description,
         repository.CreatedAt,
-        repository.PrimaryLangauge,
+        repository.PrimaryLanguage,
         repository.IsPrivate)
 }
 ```
@@ -241,7 +280,7 @@ so make sure you don't skip step 9!!
 
 ## Running The Program
 
-The app takes no parameters so ... all you need to do is set access token environment variable 
+The demo app defaults all parameters so all you need to do is set access token environment variable
 and run it:
 
 ```shell
@@ -256,3 +295,55 @@ Change the `"env": {}` line of your `.vscode\launch.json` file to be as follows 
 ```
 "env": {"GITHUB_TOKEN":"cbe9869a0ae552aed6352a188f09370b945e2b21"},
 ```
+
+## Unit Testing with Macs and VSCode (or similar)
+
+If you are trying to run unit tests on a Mac from within an IDE that does not give you the
+to set environment variables for unit test execution, you can workaround the problem by 
+setting them in a `.plist` file as follows:
+
+1. Create a text file named `~/Library/LaunchAgents/githubtoken.plist`
+
+2. Use a text editor to write the XML text below to the file, substituting your personal access token
+for the `cbe9869a0...b945e2b21` value.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+  <plist version="1.0">
+  <dict>
+  <key>Label</key>
+  <string>githubtoken</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/launchctl</string>
+    <string>setenv</string>
+    <string>GITHUB_TOKEN</string>
+    <string>cbe9869a0...b945e2b21</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+</dict>
+</plist>
+```
+
+3. Run the following command in a terminal window:
+
+```shell
+launchctl load ~/Library/LaunchAgents/githubtoken.plist
+```
+
+4. The `GITHUB_TOKEN` environmnet variable will now be accessible from all pplications and 
+terminal shell contexts: exit and relaunch VSCode to have it available to the unit tests
+from within the IDE.
+
+Unfortunately, this means that it is permanently visible to anyone that runs 
+`echo $GITHUB_TOKEN` on your Mac. The only way to remove it is to delete it
+is to run
+
+```shell
+launchctl unload ~/Library/LaunchAgents/githubtoken.plist
+```
+
+and then delete the file.

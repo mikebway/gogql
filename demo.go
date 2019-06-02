@@ -6,9 +6,11 @@ package main
 import (
 	"crypto/tls"
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/mikebway/gogql/clientdemo"
 )
@@ -33,15 +35,15 @@ func main() {
 	flag.StringVar(&githubURL, "github", "https://api.github.com/graphql", "URL of the github service GraphQL API")
 	flag.StringVar(&repoOwner, "owner", "mikebway", "The organization or user that owns the repository to be evaluated")
 	flag.StringVar(&repoName, "name", "gogql", "The name of the repository to be evaluated")
-	flag.BoolVar(&disableCertificateVerification, "verify", true, "true if to skip SSL certificate verification")
+	flag.BoolVar(&disableCertificateVerification, "skipverify", false, "Use to to skip SSL certificate verification")
 	defaultUsage := flag.Usage
 	flag.Usage = func() {
 		defaultUsage()
-		log.Println()
-		log.Println("The GITHUB_TOKEN should be set to a github developer personal access token")
-		log.Println("value with sufficient rights to access the values referenced by the")
-		log.Println("github.com/mikebway/gogql/github.getRepoDataQuery GraphQL query.")
-		log.Println()
+		fmt.Println()
+		fmt.Println("The GITHUB_TOKEN should be set to a github developer personal access token")
+		fmt.Println("value with sufficient rights to access the values referenced by the")
+		fmt.Println("github.com/mikebway/gogql/github.getRepoDataQuery GraphQL query.")
+		fmt.Println()
 	}
 
 	// Parse the command line
@@ -53,8 +55,9 @@ func main() {
 	if len(githubToken) == 0 {
 
 		// The token is not set! Dang!!
+		fmt.Printf("\nERROR: GITHUB_TOKEN environment variable is not set\n\n")
 		flag.Usage()
-		log.Printf("ERROR: GITHUB_TOKEN environment is not set\n\n")
+		os.Exit(2)
 	}
 
 	// Passed as an HTTP Authorization header, the token value must be prefixed by "token "
@@ -75,11 +78,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// From here on, log output to stdout, not stderr
-	log.SetOutput(os.Stdout)
-
 	// Log the basic repository data
-	log.Printf("\n"+
+	fmt.Printf("\n"+
 		"\nRepository Name:               %v"+
 		"\nRepository owner/organization  %v"+
 		"\nDescription:                   %v"+
@@ -90,11 +90,15 @@ func main() {
 		result.Owner,
 		result.Description,
 		result.CreatedAt,
-		result.PrimaryLangauge,
+		result.PrimaryLanguage,
 		result.IsPrivate)
 
-	// Are there commits to show?
+	// Are there commits to show? There must be at least one in any non-virgin repo!
+	fmt.Println("\nMost recent commits:")
+	for _, c := range result.RecentCommits {
+		fmt.Printf("  %s\n    %s\n", c.CommittedAt.Format(time.RFC1123), c.Headline)
+	}
 
 	// And we are done done
-	log.Println("\nGraphQL Client Demo finished OK\n ")
+	fmt.Println("\n\nGraphQL Client Demo finished OK\n ")
 }

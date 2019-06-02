@@ -59,7 +59,7 @@ type QueryResponse struct {
 // The query string may be formatted with whitespace and carriage returns for readbility, any such whitespace shall
 // be removed prior to submission to the GraphQL server. The queryParms may be nil if the query does not require
 // any parameters.
-func (gc *GqlClient) Query(queryStr string, queryParms *map[string]interface{}, response *QueryResponse) error {
+func (gc *GqlClient) Query(queryStr *string, queryParms *map[string]interface{}, response *QueryResponse) error {
 
 	// Build the GraphQL query into JSON that we can POST
 	q := query{packQuery(queryStr), *queryParms}
@@ -98,10 +98,10 @@ func (gc *GqlClient) Query(queryStr string, queryParms *map[string]interface{}, 
 }
 
 // packQuery strips whitespace and newlines from a formatted GraphQL query.
-func packQuery(str string) string {
+func packQuery(str *string) string {
 
 	// Reduce all whitespace character sequences to single spaces
-	return strings.Join(strings.Fields(str), " ")
+	return strings.Join(strings.Fields(*str), " ")
 }
 
 // For GraphQL over HTTP 1.1, the query and its parameters must be wrapped in a JSON object.
