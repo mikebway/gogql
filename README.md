@@ -1,5 +1,8 @@
 # A Simple GraphQL Client For Go
 
+**NOTE:** With its built in demonstration app, this package also serves as an illustration
+of how to use the [github GraphQL API](https://developer.github.com/v4/).
+
 ## Early Stage Project
 
 As the project stands at this stage, the "client" only supports queries and not mutations
