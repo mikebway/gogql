@@ -32,20 +32,17 @@ var exitDemo = func(code int) {
 	os.Exit(code)
 }
 
-// main() uses it's own flag set so that they can be reset between unit test
-var demoFlags = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
-
 // This demonstration app retrieves the github data for a specified project,
 // defaulting to this project itself.
 func main() {
 
 	// Declare our command line flags
-	demoFlags.StringVar(&githubURL, "github", "https://api.github.com/graphql", "URL of the github service GraphQL API")
-	demoFlags.StringVar(&repoOwner, "owner", "mikebway", "The organization or user that owns the repository to be evaluated")
-	demoFlags.StringVar(&repoName, "name", "gogql", "The name of the repository to be evaluated")
-	demoFlags.BoolVar(&disableCertificateVerification, "skipverify", false, "Use to to skip SSL certificate verification")
-	defaultUsage := demoFlags.Usage
-	demoFlags.Usage = func() {
+	flag.StringVar(&githubURL, "github", "https://api.github.com/graphql", "URL of the github service GraphQL API")
+	flag.StringVar(&repoOwner, "owner", "mikebway", "The organization or user that owns the repository to be evaluated")
+	flag.StringVar(&repoName, "name", "gogql", "The name of the repository to be evaluated")
+	flag.BoolVar(&disableCertificateVerification, "skipverify", false, "Use to to skip SSL certificate verification")
+	defaultUsage := flag.Usage
+	flag.Usage = func() {
 		defaultUsage()
 		fmt.Println()
 		fmt.Println("The GITHUB_TOKEN should be set to a github developer personal access token")
@@ -56,7 +53,7 @@ func main() {
 
 	// Parse the command line. Note that we have to pass the arguments because we are
 	// not useing the default flags.Parse() function.
-	demoFlags.Parse(os.Args[1:])
+	flag.Parse()
 
 	// For the sake of easier unit testing, separate the actual work of the demo into
 	// parameterized function. Likewise, we don't use os.Exit(n) directly so that
