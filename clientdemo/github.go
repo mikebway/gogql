@@ -137,6 +137,7 @@ func GetRepoData(githubAPIURL string, githubToken string, owner string, repoName
 		Owner:           repository.Owner.Login,
 		Description:     repository.Description,
 		PrimaryLanguage: repository.PrimaryLanguage.Name,
+		DiskUsage:       repository.DiskUsage,
 		IsPrivate:       repository.IsPrivate,
 	}
 

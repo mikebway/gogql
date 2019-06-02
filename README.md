@@ -354,7 +354,7 @@ go test -coverpkg=./... -coverprofile=cover.out ./...
 go tool cover -func=cover.out
 ```
 
-Better yet, for eay repetition from shell history:
+Better yet, for easy repetition from shell history:
 
 ```text
 go test -coverpkg=./... -coverprofile=cover.out ./... ; go tool cover -func=cover.out
@@ -371,4 +371,13 @@ github.com/mikebway/gogql/gqlclient/gqlclient.go:38:    GetTargetURL    100.0%
 github.com/mikebway/gogql/gqlclient/gqlclient.go:62:    Query           88.9%
 github.com/mikebway/gogql/gqlclient/gqlclient.go:101:   packQuery       100.0%
 total:                                                  (statements)    88.2%
+```
+
+Be careful not to get so carried away looking at the coverage numbers that
+you miss noticing test failures report by the first command (I speak from
+experience). Whiel you are getting your tests working, it might be safer
+to stick with the simpler basic execution of"
+
+```text
+go test -cover ./...
 ```
