@@ -296,11 +296,11 @@ Change the `"env": {}` line of your `.vscode\launch.json` file to be as follows 
 "env": {"GITHUB_TOKEN":"cbe9869a0ae552aed6352a188f09370b945e2b21"},
 ```
 
-## Unit Testing with Macs and VSCode (or similar)
+## Unit Testing on a Macs With VSCode (or similar)
 
 If you are trying to run unit tests on a Mac from within an IDE that does not give you the
-to set environment variables for unit test execution, you can workaround the problem by 
-setting them in a `.plist` file as follows:
+ability to set environment variables for unit test execution, you can workaround the problem
+by setting the `GITHUB_TOKEN` value in a `.plist` file as follows:
 
 1. Create a text file named `~/Library/LaunchAgents/githubtoken.plist`
 
