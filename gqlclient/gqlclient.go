@@ -85,7 +85,7 @@ func (gc *GqlClient) Query(queryStr *string, queryParms *map[string]interface{},
 	// If the response status code is not 200, report an error
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 401 {
-			return errors.New(`Recieved 401 UNAUTHORIZED response! Did you need to provide an authorization key?`)
+			return errors.New("Recieved 401 UNAUTHORIZED response! Did you need to provide an authorization key?")
 		}
 		return errors.New("Expected 200 response but received: " + resp.Status)
 	}

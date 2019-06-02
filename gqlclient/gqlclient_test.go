@@ -77,6 +77,9 @@ func TestHappyPath(t *testing.T) {
 	// Construct a GraphQL client
 	client := CreateClient(githubAPIURL, &authToken)
 
+	// Confirm that the client has the expected target URL
+	assert.Equal(t, githubAPIURL, client.GetTargetURL(), "Client does not have expected target URL")
+
 	// Assemble the query parameters into a map
 	queryParms := make(map[string]interface{})
 	queryParms["owner"] = &owner
@@ -87,9 +90,7 @@ func TestHappyPath(t *testing.T) {
 
 	// Get the repository data for a public repository
 	err := client.Query(&SimpleRepoDataQuery, &queryParms, &response)
-	if err != nil {
-		t.Errorf("Happy path invocation failed: %v", err)
-	}
+	assert.Nil(t, err, "Happy path invocation failed")
 
 	// There should be no errors reported in the GraphQL response
 	assert.Empty(t, response.Errors, "There should be no GraphQL reported errors")
@@ -100,4 +101,50 @@ func TestHappyPath(t *testing.T) {
 	repository := repoDataResponse.Repository
 	assert.Equal(t, owner, repository.Owner.Login)
 	assert.Equal(t, repoName, repository.Name)
+}
+
+// TestInvalidURL examines handling of an invalid github GraphQL API URL
+func TestInvalidURL(t *testing.T) {
+
+	// Get the authorization token from the `GITHUB_TOKEN` environment variable
+	authToken := getAuthorization(t)
+
+	// Construct a GraphQL client with a duff target URL
+	client := CreateClient("http://mikebroadway.com", &authToken)
+
+	// Assemble the query parameters into a map
+	queryParms := make(map[string]interface{})
+	queryParms["owner"] = &owner
+	queryParms["name"] = &repoName
+
+	// Establish a place to recieve the results of the query
+	response := QueryResponse{Data: new(SimpleRepoDataResponse)}
+
+	// Attempt to get the repository data for a public repository ... from a duff place
+	err := client.Query(&SimpleRepoDataQuery, &queryParms, &response)
+	assert.NotEmpty(t, err, "Call to an invalid GraphQL endpoint should have failed")
+	assert.Contains(t, err.Error(), "404 Not Found", err.Error(), "http client should have reported a 404 error")
+}
+
+// TestInvalidAuth examines handling of incorrect github GraphQL authorization
+func TestInvalidAuth(t *testing.T) {
+
+	// Get the authorization token from the `GITHUB_TOKEN` environment variable
+	authToken := "token this-aint-no-party"
+
+	// Construct a GraphQL client with a duff target URL
+	client := CreateClient(githubAPIURL, &authToken)
+
+	// Assemble the query parameters into a map
+	queryParms := make(map[string]interface{})
+	queryParms["owner"] = &owner
+	queryParms["name"] = &repoName
+
+	// Establish a place to recieve the results of the query
+	response := QueryResponse{Data: new(SimpleRepoDataResponse)}
+
+	// Attempt to get the repository data for a public repository ... from a duff place
+	err := client.Query(&SimpleRepoDataQuery, &queryParms, &response)
+	assert.NotEmpty(t, err, "Call with invalid authorization should have failed")
+	assert.Contains(t, err.Error(), "Recieved 401 UNAUTHORIZED response!", err.Error(), "http client should have reported a 401 error")
 }
