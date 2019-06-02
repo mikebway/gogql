@@ -24,6 +24,7 @@ type RepoData struct {
 	Description     string       // The short description of the repository
 	CreatedAt       time.Time    // The date and time at which the repository was created
 	PrimaryLanguage string       // The language used for most of the code in the repository
+	DiskUsage       int          // The amount of storage required for the project in kilobytes
 	IsPrivate       bool         // true if the repository is private to the owner
 	RecentCommits   []RepoCommit // A list of the most recent commits (if any)
 }
@@ -71,6 +72,7 @@ type GetRepoDataResponse struct {
 		PrimaryLanguage struct {
 			Name string `json:"name"`
 		} `json:"primaryLanguage"`
+		DiskUsage int  `json:"diskUsage"`
 		IsPrivate bool `json:"isPrivate"`
 		Ref       struct {
 			Target struct {

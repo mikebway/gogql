@@ -55,8 +55,8 @@ section at the bottom of this page.
 ### Disabling TLS / SSL Certificate Validation
 
 Normally, you would not need or want to skip validation of SSL certificates but it is not uncommon
-in development enviroments for custom certificates to have been used that are not backed by
-a certificate authority that the Go enviroment is aware of. The quicketst way to work around,
+in corporate development enviroments for custom certificates to have been used that are not backed
+by a certificate authority that the Go tool chain is aware of. The quicketst way to work around,
 as illustrated by the [`demo.go`](/demo.go) app, is as follows:
 
 ```go
@@ -158,6 +158,7 @@ type GetRepoDataResponse struct {
         PrimaryLanguage struct {
             Name string `json:"name"`
         } `json:"primaryLanguage"`
+        DiskUsage int `json:"diskUsage"`
         IsPrivate bool `json:"isPrivate"`
         Ref       struct {
             Target struct {
@@ -238,12 +239,14 @@ func main() {
         "\nDescription:                   %v"+
         "\nCreated at:                    %v"+
         "\nPrimary language:              %v"+
+        "\nDisk usage (K):                %v"+
         "\nIs Private:                    %v",
         repository.Name,
         repository.Owner,
         repository.Description,
         repository.CreatedAt,
         repository.PrimaryLanguage,
+        repository.DiskUsage,
         repository.IsPrivate)
 }
 ```
@@ -346,6 +349,12 @@ terminal shell:
 ```text
 go test -coverpkg=./... -coverprofile=cover.out ./...
 go tool cover -func=cover.out
+```
+
+Better yet, for eay repetition from shell history:
+
+```text
+go test -coverpkg=./... -coverprofile=cover.out ./... ; go tool cover -func=cover.out
 ```
 
 The final command of those two should yield a report by package and function

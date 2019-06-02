@@ -51,6 +51,7 @@ func TestHappyPath(t *testing.T) {
 	expectedCreatedAt, _ := time.Parse(time.RFC3339, "2019-06-01T19:07:06Z")
 	assert.Equal(t, expectedCreatedAt, result.CreatedAt, "Repository create time doees not match")
 	assert.Equal(t, "Go", result.PrimaryLanguage, "Repository primary language doees not match")
+	assert.True(t, (result.DiskUsage > 0), "Repsoitory disk usage not obtained")
 	assert.Equal(t, false, result.IsPrivate, "Repository privacy doees not match")
 
 	// We can't check that the commit data matches what we expect - it will have changed by now - but
