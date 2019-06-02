@@ -9,47 +9,15 @@ availble form other sources that make further effor moot?
 
 ## Installation
 
-The `gqlclient` package is designed to be used in conjunction with the Go modules dependency
-management system introduced in Go 1.11 and 1.12. Simply add the following to the import
+The `gqlclient` package is designed to be used in conjunction with the
+[Go modules dependency management system](https://github.com/golang/go/wiki/Modules)
+introduced in Go 1.11 and 1.12. Use `go mod init` and add the following to the import 
 block at the head of your source code files:
 
 ```go
 import (
     "github.com/mikebway/gogql/gqlclient"
 )
-```
-
-## Unit Testing
-
-Note that to run the unit tests, you must have set the `GITHUB_TOKEN` environment variable
-with a github 'developer access token'. Instructions for creating such a token for your
-github login are described at the very bottom of this page.
-
-Also at the bottom of the page are instructions for making the `GITHUB_TOKEN` environment
-variable available for running the demo app under the VSCode IDE and make it available
-for unit test execution with VSCode.
-
-### Code Coverage Reporting
-
-Because I keep having to lookup how to get an overall line coverage report, I am documenting
-that here. Execute the following commands:
-
-```text
-go test -coverpkg=./... -coverprofile=cover.out ./...
-go tool cover -func=cover.out
-```
-
-The final command of those two should yield a report by package and function
-that looks something like this:
-
-```text
-github.com/mikebway/gogql/clientdemo/github.go:93:      GetRepoData     96.0%
-github.com/mikebway/gogql/demo.go:32:                   main            80.0%
-github.com/mikebway/gogql/gqlclient/gqlclient.go:33:    CreateClient    100.0%
-github.com/mikebway/gogql/gqlclient/gqlclient.go:38:    GetTargetURL    100.0%
-github.com/mikebway/gogql/gqlclient/gqlclient.go:62:    Query           88.9%
-github.com/mikebway/gogql/gqlclient/gqlclient.go:101:   packQuery       100.0%
-total:                                                  (statements)    88.2%
 ```
 
 ## Querying
@@ -80,8 +48,9 @@ value with sufficient rights to access the values referenced by the
 github.com/mikebway/gogql/github.getRepoDataQuery GraphQL query.
 ```
 
-Instructions for creating such a `GITHUB_TOKEN` for your github login are described at the very
-bottom of this page.
+Instructions for creating the `GITHUB_TOKEN` for your github login are described in the
+[github Authentication (for the demo and unit tests)](#github-authentication-for-the-demo-and-unit-tests)
+section at the bottom of this page.
 
 ### Disabling TLS / SSL Certificate Validation
 
@@ -279,10 +248,7 @@ func main() {
 }
 ```
 
-Note that the Go HTTP client does not recognize HomeAway's internal certificate authority, hence the
-line at the top that disables TLS certificate verification for the HTTP transport.
-
-## github Authentication (for the demo)
+## github Authentication (for the demo and unit tests)
 
 The [github GraphQL API](https://developer.github.com/v4/) requires the provision of an OAuth token
 with the right scopes. Fortunately, obtaining a token is straight forward:
@@ -301,7 +267,7 @@ Should you need to add more scopes later, you can return to the [tokens page](ht
 at any time and check as many boxes as you like ... but you will **NOT BE ABLE TO SEE THE TOKEN AGAIN**
 so make sure you don't skip step 9!!
 
-## Running The Program
+### Running The Program
 
 The demo app defaults all parameters so all you need to do is set access token environment variable
 and run it:
@@ -311,7 +277,7 @@ export GITHUB_TOKEN=cbe9869a0ae552aed6352a188f09370b945e2b21
 go run demo.go
 ```
 
-## Debugging with Visual Studio Code
+### Debugging with Visual Studio Code
 
 Change the `"env": {}` line of your `.vscode\launch.json` file to be as follows (with your token value, obviously):
 
@@ -319,7 +285,7 @@ Change the `"env": {}` line of your `.vscode\launch.json` file to be as follows 
 "env": {"GITHUB_TOKEN":"cbe9869a0ae552aed6352a188f09370b945e2b21"},
 ```
 
-## Unit Testing on a Macs With VSCode (or similar)
+### Unit Testing on a Macs With VSCode (or similar)
 
 If you are trying to run unit tests on a Mac from within an IDE that does not give you the
 ability to set environment variables for unit test execution, you can workaround the problem
@@ -370,3 +336,27 @@ launchctl unload ~/Library/LaunchAgents/githubtoken.plist
 ```
 
 and then delete the file.
+
+## Code Coverage Reporting
+
+Because I keep having to lookup how to get an overall line coverage report with the
+Go tool chain, I am documenting that here. Execute the following commands in a
+terminal shell:
+
+```text
+go test -coverpkg=./... -coverprofile=cover.out ./...
+go tool cover -func=cover.out
+```
+
+The final command of those two should yield a report by package and function
+that looks something like this:
+
+```text
+github.com/mikebway/gogql/clientdemo/github.go:93:      GetRepoData     96.0%
+github.com/mikebway/gogql/demo.go:32:                   main            80.0%
+github.com/mikebway/gogql/gqlclient/gqlclient.go:33:    CreateClient    100.0%
+github.com/mikebway/gogql/gqlclient/gqlclient.go:38:    GetTargetURL    100.0%
+github.com/mikebway/gogql/gqlclient/gqlclient.go:62:    Query           88.9%
+github.com/mikebway/gogql/gqlclient/gqlclient.go:101:   packQuery       100.0%
+total:                                                  (statements)    88.2%
+```
