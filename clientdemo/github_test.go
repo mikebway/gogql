@@ -35,14 +35,12 @@ func getAuthorization(t *testing.T) string {
 // TestHappyPath of GetRepoData(...) function to access information about a github project.
 func TestHappyPath(t *testing.T) {
 
-	// Get the authorization tokne from the `GITHUB_TOKEN` environment variable
+	// Get the authorization token from the `GITHUB_TOKEN` environment variable
 	authToken := getAuthorization(t)
 
 	// Get the repository data for a public repository
 	result, err := GetRepoData(githubAPIURL, authToken, "mikebway", "gogql")
-	if err != nil {
-		t.Errorf("Client demo invocation failed: %v", err)
-	}
+	assert.Nil(t, err, "github graphql invocation should not have failed")
 
 	// Check that the basic values are what we expect them to be
 	assert.Equal(t, "gogql", result.Name, "Repository name doees not match")
@@ -65,12 +63,22 @@ func TestHappyPath(t *testing.T) {
 // TestInvalidURL examines handling of an invalid github GraphQL API URL
 func TestInvalidURL(t *testing.T) {
 
-	// Get the authorization tokne from the `GITHUB_TOKEN` environment variable
+	// Get the authorization token from the `GITHUB_TOKEN` environment variable
 	authToken := getAuthorization(t)
 
 	// Get the repository data for a public repository ... from a bad API URL
 	_, err := GetRepoData("http://mikebroadway.com", authToken, "mikebway", "gogql")
-	if err == nil {
-		t.Errorf("Should not have been able to send a query to https://www.mikebroadway.com")
-	}
+	assert.NotEmpty(t, err, "Should not have been able to send a query to https://www.mikebroadway.com")
+}
+
+// TestFailedQuery examines handling of an GraphQL reported errors
+func TestFailedQuery(t *testing.T) {
+
+	// Get the authorization token from the `GITHUB_TOKEN` environment variable
+	authToken := getAuthorization(t)
+
+	// Ask for the repository data for a repository that does not exist
+	_, err := GetRepoData(githubAPIURL, authToken, "mikebway", "i-dont-exist")
+	assert.NotEmpty(t, err, "GetRepoData should have failed")
+	assert.Contains(t, err.Error(), "Errors found in GraphQL Response:", err.Error(), "GetRepoData should have reported GraphQL errors")
 }
