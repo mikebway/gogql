@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// This file defines unit tests for the gqlclient library.
+// This file defines unit tests for the gqlclient library package.
 
 // The github GraphQL API endpoint URL
 const githubAPIURL = "https://api.github.com/graphql"
