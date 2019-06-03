@@ -54,7 +54,7 @@ referenced by the github.com/mikebway/gogql/github.getRepoDataQuery GraphQL
 query.
 
 You can use the -token-env command line flag to override the name of the
-envionrment variable and so support more than one token value for multiple
+envvironment variable and so support more than one token value for multiple
 github services (i.e. public and corporate).
 ```
 
