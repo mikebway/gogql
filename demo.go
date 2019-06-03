@@ -55,7 +55,7 @@ func main() {
 		fmt.Println("query.")
 		fmt.Println()
 		fmt.Println("You can use the -token-env command line flag to override the name of the")
-		fmt.Println("envionrment variable and so support more than one token value for multiple")
+		fmt.Println("envvironment variable and so support more than one token value for multiple")
 		fmt.Println("github services (i.e. public and corporate).")
 	}
 
