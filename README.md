@@ -36,19 +36,26 @@ go run demo.go
 Add a `-h` flag to display the following command line usage information:
 
 ```text
-Usage of /var/folders/b6/n6cvhy2d6455c88qks3cxkr00000gn/T/go-build099997439/b001/exe/demo:
+Usage of /var/folders/n4/lzw13hln1bd47t0mfq6lvfb40000gn/T/go-build727744591/b001/exe/demo:
   -github string
-        URL of the github service GraphQL API (default "https://api.github.com/graphql")
+    	URL of the github service GraphQL API (default "https://api.github.com/graphql")
   -name string
-        The name of the repository to be evaluated (default "gogql")
+    	The name of the repository to be evaluated (default "gogql")
   -owner string
-        The organization or user that owns the repository to be evaluated (default "mikebway")
-  -verify
-        true if to skip SSL certificate verification (default true)
+    	The organization or user that owns the repository to be evaluated (default "mikebway")
+  -skipverify
+    	Use to to skip SSL certificate verification
+  -token-env string
+    	The name of the environment variable that provides the github access token (default "GITHUB_TOKEN")
 
-The GITHUB_TOKEN should be set to a github developer personal access token
-value with sufficient rights to access the values referenced by the
-github.com/mikebway/gogql/github.getRepoDataQuery GraphQL query.
+The GITHUB_TOKEN enironment variable should be set to a github developer
+personal access token value with sufficient rights to access the values
+referenced by the github.com/mikebway/gogql/github.getRepoDataQuery GraphQL
+query.
+
+You can use the -token-env command line flag to override the name of the
+envionrment variable and so support more than one token value for multiple
+github services (i.e. public and corporate).
 ```
 
 Instructions for creating the `GITHUB_TOKEN` for your github login are described in the

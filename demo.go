@@ -18,6 +18,9 @@ import (
 // URL of the github service GraphQL API; set by command line flag
 var githubURL string
 
+// The name of the environment variable to be used to load the github access token
+var tokenVarName = "GITHUB_TOKEN"
+
 // True if to disable SSL certificate verification; set by command line flag
 var disableCertificateVerification bool
 
@@ -38,6 +41,7 @@ func main() {
 
 	// Declare our command line flags
 	flag.StringVar(&githubURL, "github", "https://api.github.com/graphql", "URL of the github service GraphQL API")
+	flag.StringVar(&tokenVarName, "token-env", "GITHUB_TOKEN", "The name of the environment variable that provides the github access token")
 	flag.StringVar(&repoOwner, "owner", "mikebway", "The organization or user that owns the repository to be evaluated")
 	flag.StringVar(&repoName, "name", "gogql", "The name of the repository to be evaluated")
 	flag.BoolVar(&disableCertificateVerification, "skipverify", false, "Use to to skip SSL certificate verification")
@@ -45,10 +49,14 @@ func main() {
 	flag.Usage = func() {
 		defaultUsage()
 		fmt.Println()
-		fmt.Println("The GITHUB_TOKEN should be set to a github developer personal access token")
-		fmt.Println("value with sufficient rights to access the values referenced by the")
-		fmt.Println("github.com/mikebway/gogql/github.getRepoDataQuery GraphQL query.")
+		fmt.Println("The GITHUB_TOKEN enironment variable should be set to a github developer")
+		fmt.Println("personal access token value with sufficient rights to access the values")
+		fmt.Println("referenced by the github.com/mikebway/gogql/github.getRepoDataQuery GraphQL")
+		fmt.Println("query.")
 		fmt.Println()
+		fmt.Println("You can use the -token-env command line flag to override the name of the")
+		fmt.Println("envionrment variable and so support more than one token value for multiple")
+		fmt.Println("github services (i.e. public and corporate).")
 	}
 
 	// Parse the command line. Note that we have to pass the arguments because we are
@@ -60,7 +68,7 @@ func main() {
 	// unit tests can oveeride that behavior
 	err := runDemo(githubURL, repoOwner, repoName, disableCertificateVerification)
 	if err != nil {
-		fmt.Printf("GraphQL Client Demo FAILED:\n %v\n\n", err)
+		fmt.Printf("GraphQL Client Demo FAILED:\n\n %v\n\n", err)
 		flag.Usage()
 		exitDemo(2)
 	} else {
@@ -74,11 +82,12 @@ func runDemo(githubURL, repoOwner, repoName string, disableCertificateVerificati
 
 	// If we are still here, then the command line did not dissapoint
 	// but is the GITHUB_TOKEN environment variable set?
-	githubToken := os.Getenv("GITHUB_TOKEN")
+	githubToken := os.Getenv(tokenVarName)
 	if len(githubToken) == 0 {
 
 		// The token is not set! Dang!!
-		return errors.New("the GITHUB_TOKEN environment variable is not set")
+		msg := fmt.Sprintf("the %s environment variable is not set", tokenVarName)
+		return errors.New(msg)
 	}
 
 	// Passed as an HTTP Authorization header, the token value must be prefixed by "token "
