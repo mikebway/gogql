@@ -53,6 +53,31 @@ type QueryResponse struct {
 	} `json:"errors"`
 }
 
+// PageInfo is a GraphQL connections paging information structure, returned as an optional component
+// of any potentially multi-page GraphQL query response. Package clients expecting paged connection
+// responses should include the PageInfo type in their QueryResponse.Data structure type defintions.
+// For example:
+//
+// 		type RepositorySearch struct {
+// 			Search struct {
+// 				PageInfo gplclient.PageInfo `json:"pageInfo"`
+// 				Edges    []struct {
+// 					Node RepositoryNode `json:"node"`
+// 				} `json:"edges"`
+// 			} `json:"search"`
+// 		}
+//
+// See the discussion of [Pagination](https://graphql.org/learn/pagination/) provided by the
+// [graphql.org Introduction to GraphQL](https://graphql.org/learn/) for a fuller discussion of
+// GraphQL connections.
+//
+type PageInfo struct {
+	StartCursor     string `json:"startCursor"`
+	EndCursor       string `json:"endCursor"`
+	HasNextPage     bool   `json:"hasNextPage"`
+	HasPreviousPage bool   `json:"hasPreviousPage"`
+}
+
 // Query sends a GraphQL query string to the given URL and parses the response into the provided object reference.
 // An error is returned if any showstopping problem occurs.
 //

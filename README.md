@@ -186,6 +186,41 @@ type GetRepoDataResponse struct {
 }
 ```
 
+### Paging Connections & PageInfo
+
+As a convenience, the `gogql/gqlclient` package provides a `PageInfo` type definition that you can
+reference if your target GraphQL API utilizes 'connections' style pagination of arbitrarily large
+data sets. 
+
+GraphQL clients expecting paged connection responses can include the PageInfo type in their 
+`QueryResponse.Data` structure type defintions. For example:
+
+```go
+type RepositorySearch struct {
+	Search struct {
+		PageInfo gplclient.PageInfo `json:"pageInfo"`
+		Edges    []struct {
+			Node RepositoryNode `json:"node"`
+		} `json:"edges"`
+	} `json:"search"`
+}
+```
+
+The `PageInfo` type is defined as follows:
+
+```go
+type PageInfo struct {
+	StartCursor     string `json:"startCursor"`
+	EndCursor       string `json:"endCursor"`
+	HasNextPage     bool   `json:"hasNextPage"`
+	HasPreviousPage bool   `json:"hasPreviousPage"`
+}
+```
+
+See the discussion of [Pagination](https://graphql.org/learn/pagination/) provided by the
+[graphql.org Introduction to GraphQL](https://graphql.org/learn/) for a fuller discussion of
+GraphQL connections.
+
 ### Invoking the Query
 
 The [`demo.go`](/demo.go) demostration application in the project root is slightly more sophisticated but,
