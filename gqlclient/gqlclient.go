@@ -13,12 +13,26 @@ import (
 	"time"
 )
 
-// GqlClient is a structure/class that is used to wrap configuration data including the
-// target GraphQL URL and any autheorization token that may be required. Queries are
+// GqlClient is an interface providing methods to execute GraphQl operations.
+type GqlClient interface {
+	// Query sends a GraphQL query string to the given URL and parses the response into the provided object reference.
+	// An error is returned if any showstopping problem occurs.
+	//
+	// The query string may be formatted with whitespace and carriage returns for readbility, any such whitespace shall
+	// be removed prior to submission to the GraphQL server. The queryParms may be nil if the query does not require
+	// any parameters.
+	Query(queryStr *string, queryParms *map[string]interface{}, response *QueryResponse) error
+
+	// GetTargetURL returns the target API URL of the GqlClient.
+	GetTargetURL() string
+}
+
+// gqlClient is a structure/class that implements the GqlClient interface and wraps configuration
+// data including the target GraphQL URL and any autheorization token that may be required. Queries are
 // invoked through methods associated with this structure type.
 //
-// Valid GqlClient instances can only be obtained through the CreateClient(...) function.
-type GqlClient struct {
+// Valid gqlClient instances can only be obtained through the CreateClient(...) function.
+type gqlClient struct {
 	targetURL     string  // The GraphQL server URL, e.g. https://api.github.com/graphql
 	authorization *string // If not nil, the authoorization header value to be supplied with GraphQL calls
 }
@@ -30,12 +44,12 @@ type GqlClient struct {
 // the authorization value is write only - once set in the GqlClient it cannot be accessed outside of the
 // `gqlclient` package. While the targetURL can be retrieved vai the GetTargetURL() function, it cannot be
 // modified.
-func CreateClient(targetURL string, authorization *string) *GqlClient {
-	return &GqlClient{targetURL, authorization}
+func CreateClient(targetURL string, authorization *string) GqlClient {
+	return gqlClient{targetURL, authorization}
 }
 
 // GetTargetURL returns the target API URL of the GqlClient.
-func (gc *GqlClient) GetTargetURL() string {
+func (gc gqlClient) GetTargetURL() string {
 	return gc.targetURL
 }
 
@@ -84,7 +98,7 @@ type PageInfo struct {
 // The query string may be formatted with whitespace and carriage returns for readbility, any such whitespace shall
 // be removed prior to submission to the GraphQL server. The queryParms may be nil if the query does not require
 // any parameters.
-func (gc *GqlClient) Query(queryStr *string, queryParms *map[string]interface{}, response *QueryResponse) error {
+func (gc gqlClient) Query(queryStr *string, queryParms *map[string]interface{}, response *QueryResponse) error {
 
 	// Build the GraphQL query into JSON that we can POST
 	q := query{packQuery(queryStr), *queryParms}

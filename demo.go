@@ -80,8 +80,7 @@ func main() {
 // Do the actual work of the demo as a function that can be more easily unit tested
 func runDemo(githubURL, repoOwner, repoName string, disableCertificateVerification bool) error {
 
-	// If we are still here, then the command line did not dissapoint
-	// but is the GITHUB_TOKEN environment variable set?
+	// Is the GITHUB_TOKEN environment variable set?
 	githubToken := os.Getenv(tokenVarName)
 	if len(githubToken) == 0 {
 

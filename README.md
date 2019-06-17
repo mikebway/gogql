@@ -296,6 +296,11 @@ func main() {
 }
 ```
 
+### The Client is an Interface
+
+The client returned by `gqlclient.CreateClient(...)` is an interface and so can easily be mocked 
+using [`testify`](https://github.com/stretchr/testify) or similar.
+
 ## github Authentication (for the demo and unit tests)
 
 The [github GraphQL API](https://developer.github.com/v4/) requires the provision of an OAuth token
